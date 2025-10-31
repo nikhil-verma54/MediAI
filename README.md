@@ -17,11 +17,22 @@ The goal is to educate, guide, and support users with clear, safe, and empatheti
 
 ## Tech stack
 
-- Next.js 16 (App Router)
-- React 19
-- Tailwind CSS 4
-- Google Generative Language API (Gemini 2.5 Flash with fallback to 1.5 Flash)
-- PDF.js from CDN for text extraction
+  [User Voice/Text Input]
+        ↓
+   (VAPI + Twilio)
+        ↓
+[Frontend: Next.js Chat Interface]
+        ↓
+[Backend: Node.js + Express]
+        ↓
+[AI Engine: Hugging Face Medical Model]
+        ↓
+[Automation Layer: n8n Workflow]
+        ↓
+[Database: MongoDB]
+        ↓
+[User Dashboard & Reports]
+
 
 ## Quick start
 
@@ -110,6 +121,3 @@ To support scanned PDFs, consider adding OCR (e.g., Tesseract.js) in a future up
 - Streaming responses in chat
 - Structured outputs for medical sections (vitals, labs, medications)
 
-## Disclaimer
-
-This app is for educational guidance only and not a substitute for professional medical advice, diagnosis, or treatment. For medical concerns, consult a licensed clinician or seek emergency care when appropriate.
