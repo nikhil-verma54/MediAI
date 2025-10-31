@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# MediCap – AI Health Assistant
 
-## Getting Started
+MediCap is a minimal, fast Next.js app that helps users understand their health using AI. It includes:
 
-First, run the development server:
+- Conversational chat MedAI.
+- A voice assistant widget (Omnidimension) you can open from a floating button.
+- Client‑side PDF upload and analysis (extracts text and summarizes key findings).
+
+The goal is to educate, guide, and support users with clear, safe, and empathetic information — not to diagnose or prescribe.
+
+## Features
+
+- Chat at `/chat` with multi‑turn history sent to Gemini.
+- Voice assistant button fixed at the bottom‑right with a mic icon.
+- PDF upload (client‑side with PDF.js) to extract text and request an AI summary.
+- Clean, responsive UI built with Tailwind and the Next.js App Router.
+
+## Tech stack
+
+- Next.js 16 (App Router)
+- React 19
+- Tailwind CSS 4
+- Google Generative Language API (Gemini 2.5 Flash with fallback to 1.5 Flash)
+- PDF.js from CDN for text extraction
+
+## Quick start
+
+1) Install dependencies
+
+```bash
+npm install
+```
+
+2) Create `.env.local` in the project root and add required environment variables
+```
+
+3) Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Project structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/page.js` – Landing page
+- `app/chat/page.js` – Chat UI (Enter to send, Shift+Enter for newline, Upload PDF)
+- `app/api/chat/route.js` – Server route calling Gemini (multi‑turn, safe preamble, fallback model)
+- `app/components/VoiceWidgetButton.js` – Bottom‑right floating voice assistant button and widget script loader
+- `app/components/OmniWidgetMount.js` – Click wiring helper to open the widget reliably
 
-## Learn More
+## Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+- `GOOGLE_GEMINI_API_KEY` – Your Google Generative Language API key
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Restart the dev server after changing env variables.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How chat works
 
-## Deploy on Vercel
+- The chat UI posts messages to `/api/chat`.
+- The API route builds a Gemini request with:
+  - A clinical safety system instruction
+  - The last ~20 turns of chat history
+  - Reasonable generation config and relaxed safety (still safe)
+- If the primary model (`gemini-2.5-flash`) yields no response, it falls back to `gemini-1.5-flash`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Troubleshooting tips:
+- If you see a 500 with a Gemini error, verify the API key and model access/quota.
+- Ensure the server restarted after adding `.env.local`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Voice assistant widget
+
+- The floating button with id `omni-open-widget-btn` opens the Omnidimension widget.
+- The script is injected once with id `omnidimension-web-widget`.
+- Files:
+  - `app/components/VoiceWidgetButton.js`
+  - `app/components/OmniWidgetMount.js`
+
+If the widget doesn’t open immediately, we retry briefly until the vendor script is ready.
+
+## PDF analysis
+
+- Click “Upload PDF” in the chat footer to select a PDF.
+- We use PDF.js in the browser to extract text (scanned images are not supported without OCR).
+- The extracted text is sent to Gemini for a concise, safe summary.
+
+To support scanned PDFs, consider adding OCR (e.g., Tesseract.js) in a future update.
+
+## Deployment
+
+- Any Node‑compatible host (Vercel, Netlify, etc.)
+- Ensure `GOOGLE_GEMINI_API_KEY` is set in your hosting provider’s environment.
+
+## Security & privacy
+
+- Do not hardcode API keys in the client. Keys are read server‑side via `.env.local`.
+- This demo stores no user data by default; add your own persistence if needed.
+
+## Scripts
+
+- `npm run dev` – Start dev server
+- `npm run build` – Build for production
+- `npm start` – Start production server
+
+## Roadmap ideas
+
+- OCR support for scanned PDFs
+- Source citations and references
+- Streaming responses in chat
+- Structured outputs for medical sections (vitals, labs, medications)
+
+## Disclaimer
+
+This app is for educational guidance only and not a substitute for professional medical advice, diagnosis, or treatment. For medical concerns, consult a licensed clinician or seek emergency care when appropriate.
