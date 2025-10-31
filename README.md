@@ -1,3 +1,7 @@
+https://medi-ai-liart.vercel.app/ visit this link for mvp
+
+
+
 # MediCap – AI Health Assistant
 
 MediCap is a minimal, fast Next.js app that helps users understand their health using AI. It includes:
